@@ -42,8 +42,7 @@ const Login: React.FC = () => {
 		login_email: '',
 		login_password: '',
 	};
-	// onSubmit={(values) => on_submit(values.login_email, values.login_password)}
-	// onSubmit={on_submit}
+
 	return (
 		<Container>
 			<Formik
