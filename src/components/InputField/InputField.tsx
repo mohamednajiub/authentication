@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, TextField } from '@material-ui/core';
+import { Grid, TextField, Typography } from '@material-ui/core';
 import { ErrorMessage } from 'formik';
 
 interface Props {
@@ -22,7 +22,9 @@ const InputField: React.FC<Props> = ({ type, name, value, onChange, onBlur, labe
 				onBlur={onBlur}
 				label={label}
 			/>
-			<ErrorMessage name={name} component='p' />
+			<Typography color='error'>
+				<ErrorMessage name={name} />
+			</Typography>
 		</Grid>
 	);
 };
