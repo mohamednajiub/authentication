@@ -9,7 +9,8 @@ import Drawer from '@material-ui/core/Drawer';
 
 import MainHorizontalWhiteLogo from '../../images/logos/IEEE-HSB-white-horizontal-logo.png'
 
-import { MenuItem, Link, Hidden, Container } from '@material-ui/core';
+import { MenuItem, Link as MUILink, Hidden, Container } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -48,19 +49,19 @@ export default function ButtonAppBar() {
 		<AppBar position='static'>
 			<Container disableGutters>
 				<Toolbar className={classes.headerWrapper}>
-					<Link href="https://ieeehsb.org" className={classes.brand}>
+					<MUILink href="https://ieeehsb.org" className={classes.brand}>
 						<img src={MainHorizontalWhiteLogo} alt="IEEE Helwan Student Branch" className={classes.brandLogo} />
-					</Link>
+					</MUILink>
 
 					<Hidden only={['xs', 'sm']}>
 						<nav className={classes.menu}>
-							<MenuItem component="a" href="https://ieeehsb.org">
+							<MenuItem component={Link} to="https://ieeehsb.org">
 								Home
 							</MenuItem>
-							<MenuItem component="a" href="/login">
+							<MenuItem component={Link} to="/login">
 								Login
 							</MenuItem>
-							<MenuItem component="a" href="/register">
+							<MenuItem component={Link} to="/register">
 								Registeration
 							</MenuItem>
 						</nav>
@@ -80,13 +81,13 @@ export default function ButtonAppBar() {
 				<Hidden mdUp>
 					<Drawer anchor="left" open={open_drawer} onClose={toggleDrawer}>
 						<nav>
-							<MenuItem component="a" href="https://ieeehsb.org">
+							<MenuItem component={Link} to="https://ieeehsb.org">
 								Home
 							</MenuItem>
-							<MenuItem component="a" href="/login">
+							<MenuItem component={Link} to="/login">
 								Login
 							</MenuItem>
-							<MenuItem component="a" href="/register">
+							<MenuItem component={Link} to="/register">
 								Registeration
 							</MenuItem>
 						</nav>
