@@ -5,39 +5,19 @@ import './Declerations/ScssModule.d.ts';
 import 'react-app-polyfill/ie9';
 import * as serviceWorker from './serviceWorker';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core';
+import { BrowserRouter as Router } from 'react-router-dom';
 
-const theme = createMuiTheme({
-	palette: {
-		primary: {
-			main: '#207DAB',
-		},
-		secondary: {
-			main: '#424242',
-		},
-		error: {
-			main: 'hsl(358 72% 42% / 1)',
-		},
-		success: {
-			main: '#7CA841',
-		},
-		info: {
-			main: '#000',
-		},
-	},
+import CssBaseline from '@material-ui/core/CssBaseline';
 
-	typography: {
-		fontFamily: ['Cairo', 'sans-serif'].join(','),
-		fontSize: 16,
-		fontWeightLight: 300,
-		fontWeightRegular: 400,
-		fontWeightBold: 700,
-	},
-});
+import theme from './utils/theme';
 
 ReactDOM.render(
 	<React.StrictMode>
 		<ThemeProvider theme={theme}>
-			<App />
+			<Router>
+				<CssBaseline />
+				<App />
+			</Router>
 		</ThemeProvider>
 	</React.StrictMode>,
 	document.getElementById('root')
