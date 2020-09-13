@@ -7,7 +7,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 
 import Drawer from '@material-ui/core/Drawer';
 
-import MainHorizontalLogo from '../../images/logos/white-logo-cropped.png'
+import MainHorizontalWhiteLogo from '../../images/logos/IEEE-HSB-white-horizontal-logo.png'
 
 import { MenuItem, Link, Hidden, Container } from '@material-ui/core';
 
@@ -49,7 +49,7 @@ export default function ButtonAppBar() {
 			<Container disableGutters>
 				<Toolbar className={classes.headerWrapper}>
 					<Link href="https://ieeehsb.org" className={classes.brand}>
-						<img src={MainHorizontalLogo} alt="IEEE Helwan Student Branch" className={classes.brandLogo} />
+						<img src={MainHorizontalWhiteLogo} alt="IEEE Helwan Student Branch" className={classes.brandLogo} />
 					</Link>
 
 					<Hidden only={['xs', 'sm']}>
