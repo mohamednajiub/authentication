@@ -5,6 +5,8 @@ import AppHeader from './components/AppHeader/AppHeader';
 import { Route, Switch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 
+import Logos from './components/Logos/Logos';
+
 const useStyles = makeStyles({
 	container: {},
 });
@@ -17,6 +19,7 @@ const App = () => {
 				<Route exact path='/login' component={Login} />
 				<Route exact path='/Register' render={(props) => <h1>hi Register</h1>} />
 			</Switch>
+			<Logos />
 		</div>
 	);
 };
