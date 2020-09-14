@@ -1,5 +1,6 @@
 import React from 'react';
 import { Container, Button } from '@material-ui/core';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Formik, Form } from 'formik';
 
 import * as Yup from 'yup';
@@ -8,7 +9,23 @@ import { LoginSubmit, LoginResponse } from '../Interfaces/Auth/Login';
 
 import Axios from '../utils/Axios';
 
+
+const useStyles = makeStyles((theme: Theme) =>
+	createStyles({
+		form: {
+			width: '100%',
+			marginTop: theme.spacing(30),
+		},
+		submit: {
+			margin: theme.spacing(2, 0),
+		}
+	})
+);
+
 const Login: React.FC = (props: any) => {
+
+	const classes = useStyles();
+
 	const on_submit: LoginSubmit = (email, password, setSubmitting) => {
 		const loginData = {
 			email: email,
@@ -54,7 +71,7 @@ const Login: React.FC = (props: any) => {
 	};
 
 	return (
-		<Container>
+		<Container maxWidth='xs'>
 			<Formik
 				initialValues={initial_values}
 				validationSchema={validation_schema}
@@ -63,7 +80,7 @@ const Login: React.FC = (props: any) => {
 				}
 			>
 				{({ values, handleChange, handleBlur, isSubmitting, isValid }) => (
-					<Form method='POST'>
+					<Form method='POST' className={classes.form}>
 						<InputField
 							type='email'
 							name='login_email'
@@ -71,6 +88,10 @@ const Login: React.FC = (props: any) => {
 							onChange={handleChange}
 							onBlur={handleBlur}
 							label='Email'
+							size={{
+								'xs': 12
+							}}
+							required={true}
 						/>
 						<InputField
 							type='password'
@@ -79,10 +100,17 @@ const Login: React.FC = (props: any) => {
 							onChange={handleChange}
 							onBlur={handleBlur}
 							label='Password'
+							size={{
+								'xs': 12
+							}}
+							required={true}
 						/>
-						<Button color='primary' type='submit' disabled={!isValid || isSubmitting}>
+
+						<Button fullWidth color='primary' type='submit' variant={(!isValid || isSubmitting) ? 'contained' : 'outlined'} disabled={!isValid || isSubmitting} className={classes.submit}>
 							login
 						</Button>
+
+
 					</Form>
 				)}
 			</Formik>

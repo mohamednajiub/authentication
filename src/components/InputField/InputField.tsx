@@ -9,11 +9,14 @@ interface Props {
 	onChange: any;
 	onBlur?: any;
 	label: string;
+	size: {};
+	required?: boolean;
+	autoComplete?: string;
 }
 
-const InputField: React.FC<Props> = ({ type, name, value, onChange, onBlur, label }) => {
+const InputField: React.FC<Props> = ({ type, name, value, onChange, onBlur, label, required, size, autoComplete }) => {
 	return (
-		<Grid>
+		<Grid item {...size}>
 			<TextField
 				type={type}
 				name={name}
@@ -21,6 +24,9 @@ const InputField: React.FC<Props> = ({ type, name, value, onChange, onBlur, labe
 				onChange={onChange}
 				onBlur={onBlur}
 				label={label}
+				fullWidth
+				required={required || false}
+				autoComplete={autoComplete || ''}
 			/>
 			<Typography color='error'>
 				<ErrorMessage name={name} />

@@ -23,8 +23,8 @@ const Logos = () => {
     const classes = useStyles();
 
     return (
-        <Container>
-            <Grid container xl={3} md={4} sm={6} xs={12} spacing={2} alignContent="space-between" alignItems="center">
+        <Container maxWidth='xs'>
+            <Grid container spacing={2} alignContent="space-between" alignItems="center">
                 <Grid item xs={2} component="a" href="https://ieeehsb.org" target="_blank" rel="noreferrer noopener">
                     <img src={MainVerticalLogo} alt="IEEE Helwan Student Branch" className={classes.linkLogo} />
                 </Grid>

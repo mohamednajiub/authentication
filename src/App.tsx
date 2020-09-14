@@ -1,19 +1,14 @@
-import React, { createContext } from 'react';
+import React from 'react';
+import { Route, Switch } from 'react-router-dom';
+
 import Login from './components/Login';
 import AppHeader from './components/AppHeader/AppHeader';
-
-import { Route, Switch } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-
 import Logos from './components/Logos/Logos';
 
-const useStyles = makeStyles({
-	container: {},
-});
 const App = () => {
-	const classes = useStyles();
+
 	return (
-		<div className={classes.container}>
+		<div>
 			<AppHeader />
 			<Switch>
 				<Route exact path='/login' component={Login} />

@@ -4,7 +4,7 @@ import App from './App';
 import './Declerations/ScssModule.d.ts';
 import 'react-app-polyfill/ie9';
 import * as serviceWorker from './serviceWorker';
-import { ThemeProvider, createMuiTheme } from '@material-ui/core';
+import { ThemeProvider } from '@material-ui/core';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
