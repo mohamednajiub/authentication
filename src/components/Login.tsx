@@ -4,7 +4,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { Formik, Form } from 'formik';
 
 import * as Yup from 'yup';
-import InputField from './InputField/InputField';
+import FormikField from './FormFields/FormikField';
 import { LoginSubmit, LoginResponse } from '../Interfaces/Auth/Login';
 
 import Axios from '../utils/Axios';
@@ -58,9 +58,9 @@ const Login: React.FC = (props: any) => {
 		login_password: Yup.string()
 			.trim()
 			.required('No Password Provided')
-			.min(8, 'Password is too short it must be at least 8 characters or longer')
+			.min(6, 'Password is too short it must be at least 6 characters or longer')
 			.matches(
-				/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}/,
+				/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}/,
 				'Your password must have numbers, capital letters, small letters and special characters '
 			),
 	});
@@ -79,38 +79,13 @@ const Login: React.FC = (props: any) => {
 					on_submit(values.login_email, values.login_password, setSubmitting)
 				}
 			>
-				{({ values, handleChange, handleBlur, isSubmitting, isValid }) => (
+				{({ isSubmitting, isValid, values, handleBlur, handleChange }) => (
 					<Form method='POST' className={classes.form}>
-						<InputField
-							type='email'
-							name='login_email'
-							value={values.login_email}
-							onChange={handleChange}
-							onBlur={handleBlur}
-							label='Email'
-							size={{
-								'xs': 12
-							}}
-							required={true}
-						/>
-						<InputField
-							type='password'
-							name='login_password'
-							value={values.login_password}
-							onChange={handleChange}
-							onBlur={handleBlur}
-							label='Password'
-							size={{
-								'xs': 12
-							}}
-							required={true}
-						/>
-
+						<FormikField type="email" name="login_email" label="Email" required />
+						<FormikField type="password" name="login_password" label="Password" required />
 						<Button fullWidth color='primary' type='submit' variant={(!isValid || isSubmitting) ? 'contained' : 'outlined'} disabled={!isValid || isSubmitting} className={classes.submit}>
 							login
 						</Button>
-
-
 					</Form>
 				)}
 			</Formik>

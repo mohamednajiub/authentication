@@ -1,91 +1,90 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-
-import { Container, Button } from '@material-ui/core';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { Formik, Form } from 'formik';
-
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import Typography from '@material-ui/core/Typography';
-
+import React, { useState, useEffect, useRef } from 'react';
+import { Field, ErrorMessage, FormikProps } from 'formik';
 import * as Yup from 'yup';
+
+import {
+    Container,
+    TextField,
+    FormControl,
+    FormControlLabel,
+    Radio,
+    MenuItem,
+    InputLabel,
+    Typography,
+    createStyles,
+    makeStyles,
+    Theme
+} from '@material-ui/core';
+
+import { RadioGroup, Select } from 'formik-material-ui';
+
 
 import Axios from '../utils/Axios';
 
-import ChooseType from './RegistrationComponents/ChooseType';
-import BasicData from './RegistrationComponents/BasicData'
+import FormikStepper from './RegistrationComponents/FormikStepper';
+import FormikStep from './RegistrationComponents/FormikStep';
+// import FormikField from './FormFields/FormikField';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        form: {
+        fullwidth: {
             width: '100%',
-            marginTop: theme.spacing(30),
-        },
-        submit: {
-            margin: theme.spacing(2, 0),
-        },
-        root: {
-            width: '100%',
-        },
-        backButton: {
-            marginRight: theme.spacing(1),
-        },
-        instructions: {
-            marginTop: theme.spacing(1),
-            marginBottom: theme.spacing(1),
         },
     })
 );
 
-const getSteps = () => {
-    return ['Choose Type', 'Fill Basic Data', 'Fill Additional Data'];
-}
+const Registration = () => {
 
-const getStepContent = (stepIndex: number, values, handleChange, handleBlur) => {
-
-    switch (stepIndex) {
-        case 0:
-            return <ChooseType values={values} handleChange={handleChange} handleBlur={handleBlur} />;
-        case 1:
-            return <BasicData values={values} handleChange={handleChange} handleBlur={handleBlur} />;
-        case 2:
-            return 'This is the bit I really care about!';
-        default:
-            return 'Unknown stepIndex';
-    }
-}
-
-const Registration: React.FC = (props: any) => {
+    const [chapters, set_chapters] = useState([]);
+    const [committees, set_committees] = useState([]);
+    const [positions, set_positions] = useState([]);
+    const [roles, set_roles] = useState([]);
 
     const classes = useStyles();
 
-    const [activeStep, setActiveStep] = useState(0);
-    const steps = getSteps();
+    useEffect(() => {
+        Axios.get('/register')
+            .then((response) => {
+                console.log(response);
+                set_roles(response.data.data.roles);
+                set_chapters(response.data.data.chapters);
+                set_committees(response.data.data.committees);
+                set_positions(response.data.data.positions);
+            })
+            .catch((error) => {
+                console.log(error.response);
+            });
+    }, [])
 
-    const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    };
-
-    const handleBack = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    };
-
-    const handleReset = () => {
-        setActiveStep(0);
+    const initial_values = {
+        type: '',
+        first_name: '',
+        last_name: '',
+        reg_email: '',
+        reg_password: '',
+        reg_password_confirmation: '',
+        role: '',
+        ex_options: '',
+        committee: '',
+        DOB: '',
+        faculty: '',
+        university: ''
     };
 
     const on_submit = (values, setSubmitting) => {
         console.log(values)
         const regestration_data = {
-            first_name: values.first_name,
-            last_name: values.last_name,
+            firstName: values.first_name,
+            lastName: values.last_name,
             email: values.reg_email,
             password: values.reg_password,
             password_confirmation: values.reg_password_confirmation,
-            type: values.reg_type
+            type: values.type,
+            role: values.role,
+            ex_options: values.ex_options,
+            committee: values.committee
         };
+        console.log(regestration_data)
         // Axios.post('/register', regestration_data)
         //     .then((response) => {
         //         console.log(response);
@@ -95,99 +94,202 @@ const Registration: React.FC = (props: any) => {
         //     });
     };
 
-    const validation_schema = Yup.object().shape({
-        // login_email: Yup.string()
-        //     .trim()
-        //     .required('No Email Provided')
-        //     .email("It doesn't seems an valid Email"),
-        // login_password: Yup.string()
-        //     .trim()
-        //     .required('No Password Provided')
-        //     .min(8, 'Password is too short it must be at least 8 characters or longer')
-        //     .matches(
-        //         /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}/,
-        //         'Your password must have numbers, capital letters, small letters and special characters '
-        //     ),
-    });
-
-    const initial_values = {
-        reg_type: '',
-        first_name: '',
-        last_name: '',
-        reg_email: '',
-        reg_password: '',
-        reg_password_confirmation: '',
-        position: '',
-        ex_options: '',
-        committee: '',
-        DOB: '',
-        faculty: '',
-        university: ''
-    };
+    const myFormRef = useRef<FormikProps<any>>(null);
 
     return (
-        <>
-            <Container maxWidth='sm'>
+        <Container maxWidth='sm'>
+            <FormikStepper
+                initialValues={initial_values}
+                onSubmit={(values, { setSubmitting }) =>
+                    on_submit(values, setSubmitting)
+                }
+                innerRef={myFormRef}
+            >
+                <FormikStep
+                    label="Choose Type"
+                    validationSchema={Yup.object().shape({
+                        type: Yup.string().required('Please Choose Your Type'),
+                    })}
+                >
+                    <InputLabel htmlFor="type">Choose Your Type</InputLabel>
+                    <Field component={RadioGroup} name="type" id="type">
+                        <FormControlLabel
+                            value="participante"
+                            control={<Radio />}
+                            label="Participante"
+                        />
+                        <FormControlLabel
+                            value="volunteer"
+                            control={<Radio />}
+                            label="Volunteer"
+                        />
+                    </Field>
+                    <Typography color='error'>
+                        <ErrorMessage name='type' />
+                    </Typography>
+                </FormikStep>
 
-                <>
+                <FormikStep
+                    label="Basic Data"
+                    validationSchema={
+                        Yup.object().shape({
+                            first_name: Yup.string()
+                                .trim()
+                                .min(2, "First Name must be at least 2 characters or longer")
+                                .max(20, 'First Name is too long it must be less than or equal 20 characters')
+                                .required('First Name is Required'),
+                            last_name: Yup.string()
+                                .trim()
+                                .min(2, "Last Name must be at least 2 characters or longer")
+                                .max(20, 'Last Name is too long it must be less than or equal 20 characters')
+                                .required('Last Name is Required'),
+                            reg_email: Yup.string()
+                                .trim()
+                                .email('It doesn\'t seems an valid Email')
+                                .required('No Email Provided'),
+                            reg_password: Yup.string()
+                                .trim()
+                                .required('No Password Provided')
+                                .min(6, 'Password is too short it must be at least 6 characters or longer')
+                                .matches(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,20}/, 'Your password must contains numbers, capital letters, small letters and special characters'),
+                            reg_password_confirmation: Yup.string()
+                                .trim()
+                                .required('Password Confirmation Can\'t be empty')
+                                .oneOf([Yup.ref('reg_password'), ''], 'Passwords must match'),
+                        })
+                    }
+                >
+                    <>
+                        <Field name="first_name" as={TextField} label="First Name" fullWidth />
+                        <Typography color='error'>
+                            <ErrorMessage name='first_name' />
+                        </Typography>
+                    </>
+                    <>
+                        <Field name="last_name" as={TextField} label="Last Name" fullWidth />
+                        <Typography color='error'>
+                            <ErrorMessage name='last_name' />
+                        </Typography>
+                    </>
+                    <>
+                        <Field name="reg_email" as={TextField} label="Email" type="email" fullWidth />
+                        <Typography color='error'>
+                            <ErrorMessage name='reg_email' />
+                        </Typography>
+                    </>
+                    <>
+                        <Field name="reg_password" as={TextField} label="Password" type="password" fullWidth />
+                        <Typography color='error'>
+                            <ErrorMessage name='reg_password' />
+                        </Typography>
+                    </>
+                    <>
+                        <Field name="reg_password_confirmation" as={TextField} label="Password Confirmation" type="password" fullWidth />
+                        <Typography color='error'>
+                            <ErrorMessage name='reg_password_confirmation' />
+                        </Typography>
+                    </>
+                </FormikStep>
 
-                    <Stepper activeStep={activeStep} alternativeLabel>
-                        {steps.map((label) => (
-                            <Step key={label}>
-                                <StepLabel>{label}</StepLabel>
-                            </Step>
-                        ))}
-                    </Stepper>
-                    <div>
-                        {activeStep === steps.length ? (
-                            <div>
-                                <Typography className={classes.instructions}>Registration Complete Successfully, Please Activate Your Account</Typography>
-                                <Typography className={classes.instructions}>Registration Complete Successfully, Please Wait until your account beeing activated</Typography>
-                                <Button component={Link} to="/">GO HOME</Button>
-                            </div>
-                        ) : (
-                                <div>
-                                    <Formik
-                                        initialValues={initial_values}
-                                        validationSchema={validation_schema}
-                                        onSubmit={(values, { setSubmitting }) =>
-                                            on_submit(values, setSubmitting)
-                                        }
-                                    >
-                                        {({ values, handleChange, handleBlur, isSubmitting, isValid }) => (
-                                            <Form method='POST' className={classes.form}>
-                                                {getStepContent(activeStep, values, handleChange, handleBlur)}
+                <FormikStep
+                    label="Additional Data"
+                    validationSchema={
+                        Yup.object().shape({
+                            DOB: Yup.date(),
 
-                                                <Button fullWidth color='primary' type='submit' variant={(!isValid || isSubmitting) ? 'contained' : 'outlined'} className={classes.submit}>
-                                                    Register
-                        						</Button>
-                                            </Form>
-                                        )}
-                                    </Formik>
+                            role: Yup.string()
+                                .when('type', {
+                                    is: 'volunteer',
+                                    then: Yup.string().required('Please Select Your Role'),
+                                    otherwise: Yup.string().notRequired()
+                                }),
+                            ex_options: Yup.string()
+                                .when('role', {
+                                    is: 'ex_com',
+                                    then: Yup.string().required('Please Select Your Position'),
+                                    otherwise: Yup.string().notRequired()
+                                }),
 
-                                    <div>
-                                        <Button
-                                            disabled={activeStep === 0}
-                                            onClick={handleBack}
-                                            className={classes.backButton}
-                                        >
-                                            Back
-                                            </Button>
-                                        <Button variant="contained" color="primary" onClick={handleNext}>
-                                            {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                                        </Button>
-                                    </div>
-                                </div>
-                            )
-                        }
-                    </div>
+                            committee: Yup.string()
+                                .when('role', {
+                                    is: 'highboard' || 'volunteer',
+                                    then: Yup.string().required('Please Choose your Committee'),
+                                    otherwise: Yup.string().notRequired()
+                                }),
+                            faculty: Yup.string()
+                                .trim()
+                                .min(4, "Last Name must be at least 4 characters or longer")
+                                .max(50, 'Last Name is too long it must be less than or equal 50 characters')
+                            ,
+                            university: Yup.string()
+                                .trim()
+                                .min(3, "Last Name must be at least 3 characters or longer")
+                                .max(50, 'Last Name is too long it must be less than or equal 50 characters')
+                            ,
+                        })
+                    }
+                >
+                    {
+                        myFormRef.current ? myFormRef.current.values?.type === 'volunteer' ?
+                            (<h1>hi</h1>)
+                            : null
+                            : null
+                    }
 
-                </>
+                    <FormControl className={classes.fullwidth}>
+                        <InputLabel htmlFor="role">Role</InputLabel>
+                        <Field
+                            component={Select}
+                            name="role"
+                            inputProps={{
+                                id: 'role',
+                            }}
+                        >
+                            {roles.map((role: any) => <MenuItem key={role.id} value={role.name}>{role.name.toUpperCase()}</MenuItem>)}
+                        </Field>
+                    </FormControl>
+                    <FormControl className={classes.fullwidth}>
+                        <InputLabel htmlFor="ex_options">Position</InputLabel>
+                        <Field
+                            component={Select}
+                            name="ex_options"
+                            inputProps={{
+                                id: 'ex_options',
+                            }}
+                        >
+                            {positions.map((position: any) => <MenuItem key={position.id} value={position.name}>{position.name.toUpperCase()}</MenuItem>)}
+                        </Field>
+                    </FormControl>
+                    <FormControl className={classes.fullwidth}>
+                        <InputLabel htmlFor="committee">Committee</InputLabel>
+                        <Field
+                            component={Select}
+                            name="committee"
+                            inputProps={{
+                                id: 'committee',
+                            }}
+                        >
+                            {committees.map((committee: any) => <MenuItem key={committee.id} value={committee.name}>{committee.name.toUpperCase()}</MenuItem>)}
+                        </Field>
+                    </FormControl>
+                    <Field
+                        as={TextField}
+                        id="date"
+                        label="Birthday"
+                        type="date"
+                        name="DOB"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        fullWidth
+                    />
+                    <Field name="faculty" as={TextField} label="Faculty" type="text" fullWidth />
+                    <Field name="university" as={TextField} label="University" type="text" fullWidth />
+                </FormikStep>
 
-            </Container>
-
-        </>
-    );
-};
+            </FormikStepper>
+        </Container>
+    )
+}
 
 export default Registration;
