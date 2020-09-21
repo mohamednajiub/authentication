@@ -1,24 +1,24 @@
-import React, { useState, useRef } from 'react';
-import ReactDOM from 'react-dom';
-import { Formik, Form, FormikValues, FormikConfig, FormikProps } from 'formik'
+import React, { useState, createContext } from 'react';
+
+import { Formik, Form, FormikValues, FormikConfig } from 'formik'
 import { Button } from '@material-ui/core';
 import { FormikStepProps } from './FormikStep';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
+import AdditionalData from './RegisterationSteps/AdditionalData';
 
+
+export let FormValues = createContext({});
 
 const FormikStepper = ({ children, ...props }: FormikConfig<FormikValues>) => {
     const children_array = React.Children.toArray(children) as React.ReactElement<FormikStepProps>[];
     const [step, set_step] = useState(0);
     const current_child = children_array[step];
-    const [completed, set_completed] = useState(false);
 
     const is_last_step = () => {
         return step === children_array.length - 1
     }
-
-
 
     return (
         <Formik
@@ -36,6 +36,7 @@ const FormikStepper = ({ children, ...props }: FormikConfig<FormikValues>) => {
 
         >
             {({ isSubmitting, handleBlur, handleChange, values }) => (
+
                 <Form autoComplete="off">
                     <Stepper activeStep={step} alternativeLabel>
                         {children_array.map((child) => (
@@ -45,22 +46,15 @@ const FormikStepper = ({ children, ...props }: FormikConfig<FormikValues>) => {
                         ))}
                     </Stepper>
 
-                    {current_child}
-                    {/* {ReactDOM.render(current_child, null, values)} */}
-
-
-                    {console.log(current_child.props)}
-
-                    {
-                        step === 1 ?
-                            localStorage.setItem('type', `${values.type}`)
-                            : null
+                    {is_last_step() ?
+                        <AdditionalData values={values} />
+                        : current_child
                     }
 
                     {step > 0 ? <Button onClick={() => set_step(s => s - 1)}>Back</Button> : null}
                     <Button type="submit">{is_last_step() ? 'Register' : 'Next'}</Button>
-                    {JSON.stringify(values, null, 4)}
                 </Form>
+
             )}
         </Formik>
     )
