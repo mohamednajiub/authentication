@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Field, ErrorMessage, FormikProps } from 'formik';
+import FormLabel from '@material-ui/core/FormLabel';
+
 import * as Yup from 'yup';
 
 import {
@@ -13,11 +15,11 @@ import {
     Typography,
     createStyles,
     makeStyles,
-    Theme
+    Theme,
+
 } from '@material-ui/core';
 
-import { RadioGroup, Select } from 'formik-material-ui';
-
+import { Select, RadioGroup } from 'formik-material-ui';
 
 import Axios from '../utils/Axios';
 
@@ -33,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-const Registration = () => {
+const Registration = (props) => {
 
     const [chapters, set_chapters] = useState([]);
     const [committees, set_committees] = useState([]);
@@ -96,14 +98,16 @@ const Registration = () => {
 
     const myFormRef = useRef<FormikProps<any>>(null);
 
+
     return (
         <Container maxWidth='sm'>
             <FormikStepper
+                // innerRef={formikRef}
+
                 initialValues={initial_values}
                 onSubmit={(values, { setSubmitting }) =>
                     on_submit(values, setSubmitting)
                 }
-                innerRef={myFormRef}
             >
                 <FormikStep
                     label="Choose Type"
@@ -111,18 +115,10 @@ const Registration = () => {
                         type: Yup.string().required('Please Choose Your Type'),
                     })}
                 >
-                    <InputLabel htmlFor="type">Choose Your Type</InputLabel>
-                    <Field component={RadioGroup} name="type" id="type">
-                        <FormControlLabel
-                            value="participante"
-                            control={<Radio />}
-                            label="Participante"
-                        />
-                        <FormControlLabel
-                            value="volunteer"
-                            control={<Radio />}
-                            label="Volunteer"
-                        />
+                    <Field component={RadioGroup} name="type">
+                        <FormLabel component="legend">Choose Your Type</FormLabel>
+                        <FormControlLabel value="participant" control={<Radio color="primary" />} label="Participant" />
+                        <FormControlLabel value="volunteer" control={<Radio color="primary" />} label="Volunteer" />
                     </Field>
                     <Typography color='error'>
                         <ErrorMessage name='type' />
@@ -131,33 +127,33 @@ const Registration = () => {
 
                 <FormikStep
                     label="Basic Data"
-                    validationSchema={
-                        Yup.object().shape({
-                            first_name: Yup.string()
-                                .trim()
-                                .min(2, "First Name must be at least 2 characters or longer")
-                                .max(20, 'First Name is too long it must be less than or equal 20 characters')
-                                .required('First Name is Required'),
-                            last_name: Yup.string()
-                                .trim()
-                                .min(2, "Last Name must be at least 2 characters or longer")
-                                .max(20, 'Last Name is too long it must be less than or equal 20 characters')
-                                .required('Last Name is Required'),
-                            reg_email: Yup.string()
-                                .trim()
-                                .email('It doesn\'t seems an valid Email')
-                                .required('No Email Provided'),
-                            reg_password: Yup.string()
-                                .trim()
-                                .required('No Password Provided')
-                                .min(6, 'Password is too short it must be at least 6 characters or longer')
-                                .matches(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,20}/, 'Your password must contains numbers, capital letters, small letters and special characters'),
-                            reg_password_confirmation: Yup.string()
-                                .trim()
-                                .required('Password Confirmation Can\'t be empty')
-                                .oneOf([Yup.ref('reg_password'), ''], 'Passwords must match'),
-                        })
-                    }
+                // validationSchema={
+                //     Yup.object().shape({
+                //         first_name: Yup.string()
+                //             .trim()
+                //             .min(2, "First Name must be at least 2 characters or longer")
+                //             .max(20, 'First Name is too long it must be less than or equal 20 characters')
+                //             .required('First Name is Required'),
+                //         last_name: Yup.string()
+                //             .trim()
+                //             .min(2, "Last Name must be at least 2 characters or longer")
+                //             .max(20, 'Last Name is too long it must be less than or equal 20 characters')
+                //             .required('Last Name is Required'),
+                //         reg_email: Yup.string()
+                //             .trim()
+                //             .email('It doesn\'t seems an valid Email')
+                //             .required('No Email Provided'),
+                //         reg_password: Yup.string()
+                //             .trim()
+                //             .required('No Password Provided')
+                //             .min(6, 'Password is too short it must be at least 6 characters or longer')
+                //             .matches(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,20}/, 'Your password must contains numbers, capital letters, small letters and special characters'),
+                //         reg_password_confirmation: Yup.string()
+                //             .trim()
+                //             .required('Password Confirmation Can\'t be empty')
+                //             .oneOf([Yup.ref('reg_password'), ''], 'Passwords must match'),
+                //     })
+                // }
                 >
                     <>
                         <Field name="first_name" as={TextField} label="First Name" fullWidth />
@@ -192,6 +188,7 @@ const Registration = () => {
                 </FormikStep>
 
                 <FormikStep
+                    innerRef={myFormRef}
                     label="Additional Data"
                     validationSchema={
                         Yup.object().shape({
@@ -229,49 +226,63 @@ const Registration = () => {
                         })
                     }
                 >
+                    {/* {console.log(getIn(props))} */}
+                    {/* {console.log(myFormRef.current?.values)} */}
                     {
-                        myFormRef.current ? myFormRef.current.values?.type === 'volunteer' ?
-                            (<h1>hi</h1>)
-                            : null
-                            : null
+                        localStorage.getItem('type') === 'volunteer' ?
+                            (
+                                <>
+                                    {console.log('true')}
+                                    <FormControl className={classes.fullwidth}>
+                                        <InputLabel htmlFor="role">Role</InputLabel>
+                                        <Field
+                                            component={Select}
+                                            name="role"
+                                            inputProps={{
+                                                id: 'role',
+                                            }}
+                                        >
+                                            {roles.map((role: any) => <MenuItem key={role.id} value={role.name}>{role.name.toUpperCase()}</MenuItem>)}
+                                        </Field>
+                                    </FormControl>
+                                    <Typography color='error'>
+                                        <ErrorMessage name='role' />
+                                    </Typography>
+                                    <FormControl className={classes.fullwidth}>
+                                        <InputLabel htmlFor="ex_options">Position</InputLabel>
+                                        <Field
+                                            component={Select}
+                                            name="ex_options"
+                                            inputProps={{
+                                                id: 'ex_options',
+                                            }}
+                                        >
+                                            {positions.map((position: any) => <MenuItem key={position.id} value={position.name}>{position.name.toUpperCase()}</MenuItem>)}
+                                        </Field>
+                                    </FormControl>
+                                    <Typography color='error'>
+                                        <ErrorMessage name='ex_options' />
+                                    </Typography>
+                                    <FormControl className={classes.fullwidth}>
+                                        <InputLabel htmlFor="committee">Committee</InputLabel>
+                                        <Field
+                                            component={Select}
+                                            name="committee"
+                                            inputProps={{
+                                                id: 'committee',
+                                            }}
+                                        >
+                                            {committees.map((committee: any) => <MenuItem key={committee.id} value={committee.name}>{committee.name.toUpperCase()}</MenuItem>)}
+                                        </Field>
+                                    </FormControl>
+                                    <Typography color='error'>
+                                        <ErrorMessage name='committee' />
+                                    </Typography>
+                                </>
+                            )
+                            : console.log('false')
                     }
 
-                    <FormControl className={classes.fullwidth}>
-                        <InputLabel htmlFor="role">Role</InputLabel>
-                        <Field
-                            component={Select}
-                            name="role"
-                            inputProps={{
-                                id: 'role',
-                            }}
-                        >
-                            {roles.map((role: any) => <MenuItem key={role.id} value={role.name}>{role.name.toUpperCase()}</MenuItem>)}
-                        </Field>
-                    </FormControl>
-                    <FormControl className={classes.fullwidth}>
-                        <InputLabel htmlFor="ex_options">Position</InputLabel>
-                        <Field
-                            component={Select}
-                            name="ex_options"
-                            inputProps={{
-                                id: 'ex_options',
-                            }}
-                        >
-                            {positions.map((position: any) => <MenuItem key={position.id} value={position.name}>{position.name.toUpperCase()}</MenuItem>)}
-                        </Field>
-                    </FormControl>
-                    <FormControl className={classes.fullwidth}>
-                        <InputLabel htmlFor="committee">Committee</InputLabel>
-                        <Field
-                            component={Select}
-                            name="committee"
-                            inputProps={{
-                                id: 'committee',
-                            }}
-                        >
-                            {committees.map((committee: any) => <MenuItem key={committee.id} value={committee.name}>{committee.name.toUpperCase()}</MenuItem>)}
-                        </Field>
-                    </FormControl>
                     <Field
                         as={TextField}
                         id="date"
@@ -288,7 +299,7 @@ const Registration = () => {
                 </FormikStep>
 
             </FormikStepper>
-        </Container>
+        </Container >
     )
 }
 
